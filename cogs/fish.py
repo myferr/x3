@@ -2,7 +2,8 @@
 import discord
 from discord.ext import commands
 import random
-from data.data_manager import load_user_data, save_user_data
+import time # Import time for cooldowns
+from data.data_manager import load_user_data, save_user_data, load_cooldown_data, save_cooldown_data
 
 from discord import app_commands
 
@@ -13,10 +14,26 @@ class FishCog(commands.Cog):
     @app_commands.command(name="fish", description="Catch a fish!")
     async def fish(self, interaction: discord.Interaction):
         user_id = str(interaction.user.id)
+        current_time = time.time()
+        cooldown_time = 3 # seconds
+
+        cooldowns = load_cooldown_data()
+
+        if user_id in cooldowns and current_time - cooldowns[user_id] < cooldown_time:
+            remaining_time = round(cooldown_time - (current_time - cooldowns[user_id]), 1)
+            await interaction.response.send_message(f"You're on cooldown! Please wait {remaining_time} seconds before fishing again.", ephemeral=True)
+            return
+
+        cooldowns[user_id] = current_time
+        save_cooldown_data(cooldowns)
+
         users = load_user_data()
 
-        if user_id not in users:
+        # Ensure user data structure is correct
+        if user_id not in users or not isinstance(users[user_id], dict) or "fish" not in users[user_id] or "balance" not in users[user_id]:
             users[user_id] = {"balance": 0, "fish": []}
+
+        
 
         fish_types = [
             "Salmon", "Tuna", "Cod", "Trout", "Sardine", "Bass", "Pike", "Carp", 

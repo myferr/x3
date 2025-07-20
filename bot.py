@@ -3,9 +3,12 @@ import discord
 import os
 from discord.ext import commands
 from dotenv import load_dotenv
+from data.data_manager import setup_data_files
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
+
+setup_data_files()
 
 intents = discord.Intents.default()
 
