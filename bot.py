@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-    await bot.change_presence(activity=discord.Game(name="Chatting with Al"))
+    await bot.change_presence(activity=discord.Game(name="with a fishing rod"))
 
 async def setup_hook():
     for filename in os.listdir("./cogs"):
