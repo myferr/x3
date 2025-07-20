@@ -30,12 +30,21 @@ class SellCog(commands.Cog):
         sold_fish = users[user_id]["fish"][:amount]
         total_value = sum(fish["value"] for fish in sold_fish)
 
+        tier_counts = {}
+        for fish in sold_fish:
+            tier = fish.get("tier", "Common")
+            tier_counts[tier] = tier_counts.get(tier, 0) + 1
+
         users[user_id].setdefault("sold_fish", []).extend(sold_fish)
         users[user_id]["fish"] = users[user_id]["fish"][amount:]
         users[user_id]["balance"] += total_value
         save_user_data(users)
 
-        await interaction.response.send_message(f"You sold {amount} fish for ${total_value}.")
+        response = f"You sold {amount} fish for ${total_value}.\n\n**Breakdown:**\n"
+        for tier, count in sorted(tier_counts.items()):
+            response += f"- {tier}: {count}\n"
+
+        await interaction.response.send_message(response)
 
     @sell.command(name="all", description="Sell all your fish.")
     async def all(self, interaction: discord.Interaction):
@@ -49,12 +58,21 @@ class SellCog(commands.Cog):
         sold_fish = users[user_id]["fish"]
         total_value = sum(fish["value"] for fish in sold_fish)
 
+        tier_counts = {}
+        for fish in sold_fish:
+            tier = fish.get("tier", "Common")
+            tier_counts[tier] = tier_counts.get(tier, 0) + 1
+
         users[user_id].setdefault("sold_fish", []).extend(sold_fish)
         users[user_id]["fish"] = []
         users[user_id]["balance"] += total_value
         save_user_data(users)
 
-        await interaction.response.send_message(f"You sold all your fish for ${total_value}! x3")
+        response = f"You sold all your fish for ${total_value}! x3\n\n**Breakdown:**\n"
+        for tier, count in sorted(tier_counts.items()):
+            response += f"- {tier}: {count}\n"
+
+        await interaction.response.send_message(response)
 
 async def setup(bot):
     await bot.add_cog(SellCog(bot))
