@@ -7,8 +7,8 @@ class CardCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="card", description="View a user's profile card.")
-    @app_commands.describe(user="The user to view the card for.")
+    @app_commands.command(name="wallet", description="View a user's profile wallet.")
+    @app_commands.describe(user="The user to view the wallet card.")
     async def card(self, interaction: discord.Interaction, user: discord.User):
         users = load_user_data()
         user_id = str(user.id)
@@ -20,7 +20,7 @@ class CardCog(commands.Cog):
         sold_count = len(user_data.get("sold_fish", []))
 
         embed = discord.Embed(
-            title=f"{user.name}'s Profile Card",
+            title=f"{user.name}'s Profile Wallet :3",
             color=discord.Color.purple(),
             description=f"**Balance:** ${balance}\n"
                         f"**Fish in Inventory:** {fish_count}\n"
