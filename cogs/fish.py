@@ -1,4 +1,3 @@
-
 import discord
 from discord.ext import commands
 import random
@@ -38,6 +37,8 @@ class FishCog(commands.Cog):
         bait_message = ""
         rod_rarity_multiplier = 1.0
         rod_weight_multiplier = 1.0
+        rarity_multiplier = 1.0
+        weight_multiplier = 1.0
         equipped_rod = user_data.get("equipped_rod")
 
         if equipped_rod == "basic_rod":
