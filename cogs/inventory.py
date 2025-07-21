@@ -27,12 +27,17 @@ class InventoryCog(commands.Cog):
             return
 
         user_fish = users[user_id]["fish"]
-        if not user_fish:
-            embed = discord.Embed(title="Inventory", description="Your inventory is empty!", color=discord.Color.blue())
-            await interaction.response.send_message(embed=embed)
-            return
+        user_bait = users[user_id].get("bait", {"worm": 0, "magic_bait": 0})
 
         embed = discord.Embed(title=f"{interaction.user.name}'s Inventory", color=discord.Color.blue())
+
+        bait_info = f"Worms: {user_bait.get('worm', 0)}\nMagic Bait: {user_bait.get('magic_bait', 0)}"
+        embed.add_field(name="Bait", value=bait_info, inline=False)
+
+        if not user_fish:
+            embed.description = "Your fish inventory is empty!"
+            await interaction.response.send_message(embed=embed)
+            return
 
         for i, fish in enumerate(user_fish[start_index:end_index]):
             tier = fish.get("tier", "Common")
