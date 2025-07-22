@@ -1,10 +1,36 @@
-
 import json
 import os
 
 DATA_DIR = "data"
 USER_DATA_FILE = os.path.join(DATA_DIR, "users.json")
 COOLDOWN_DATA_FILE = os.path.join(DATA_DIR, "cooldowns.json")
+COOLDOWN_FILE = "cooldown.json"
+
+# Operator role persistence
+OP_ROLE_FILE = os.path.join(DATA_DIR, "operator_role.json")
+
+def save_operator_role(guild_id, role_id):
+    data = {}
+    if os.path.exists(OP_ROLE_FILE):
+        with open(OP_ROLE_FILE, "r") as f:
+            data = json.load(f)
+    data[guild_id] = role_id
+    with open(OP_ROLE_FILE, "w") as f:
+        json.dump(data, f)
+
+def load_operator_role(guild_id):
+    if not os.path.exists(OP_ROLE_FILE):
+        return None
+    with open(OP_ROLE_FILE, "r") as f:
+        data = json.load(f)
+    return data.get(guild_id)
+import json
+import os
+
+DATA_DIR = "data"
+USER_DATA_FILE = os.path.join(DATA_DIR, "users.json")
+COOLDOWN_DATA_FILE = os.path.join(DATA_DIR, "cooldowns.json")
+COOLDOWN_FILE = "cooldown.json"
 
 def setup_data_files():
     if not os.path.exists(DATA_DIR):
@@ -62,3 +88,13 @@ def load_cooldown_data():
 def save_cooldown_data(data):
     with open(COOLDOWN_DATA_FILE, "w") as f:
         json.dump(data, f, indent=4)
+
+def load_fish_cooldown():
+    if not os.path.exists(COOLDOWN_FILE):
+        return 0.3
+    with open(COOLDOWN_FILE, "r") as f:
+        return json.load(f).get("fish_cooldown", 0.3)
+
+def save_fish_cooldown(seconds):
+    with open(COOLDOWN_FILE, "w") as f:
+        json.dump({"fish_cooldown": seconds}, f)
