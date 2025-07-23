@@ -23,6 +23,7 @@ class CardCog(commands.Cog):
             title=f"{user.name}'s Profile Wallet :3",
             color=discord.Color.purple(),
             description=f"**Balance:** ${balance}\n"
+                        f"**Deposit:** ${user_data.get('deposit', 0)}\n"
                         f"**Fish in Inventory:** {fish_count}\n"
                         f"**Inventory Worth:** ${inventory_worth}\n"
                         f"**Sold Fish:** {sold_count}"

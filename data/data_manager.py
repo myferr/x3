@@ -55,6 +55,7 @@ def get_or_create_user_data(user_id):
             "equipped_rod": None,
             "fish": [],
             "balance": 0,
+            "deposit": 0,
             "sold_fish": []
         }
     
