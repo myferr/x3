@@ -14,9 +14,9 @@ class LeaderboardCog(commands.Cog):
     @app_commands.describe(page="The page of the leaderboard to display.")
     async def balance(self, interaction: discord.Interaction, page: int = 1):
         users = load_user_data()
-        sorted_users = sorted(users.items(), key=lambda item: item[1]["balance"], reverse=True)
+        sorted_users = sorted(users.items(), key=lambda item: item[1].get("balance", 0) + item[1].get("deposit", 0), reverse=True)
 
-        items_per_page = 10
+        items_per_page = 5
         start_index = (page - 1) * items_per_page
         end_index = start_index + items_per_page
 
@@ -34,9 +34,13 @@ class LeaderboardCog(commands.Cog):
         for i, (user_id, data) in enumerate(sorted_users[start_index:end_index]):
             try:
                 user = await self.bot.fetch_user(int(user_id))
-                embed.add_field(name=f"#{start_index + i + 1} - {user.name}", value=f"${data['balance']}", inline=False)
+                balance = data.get('balance', 0)
+                deposit = data.get('deposit', 0)
+                embed.add_field(name=f"#{start_index + i + 1} - {user.name}", value=f"Wallet: ${balance} | Bank: ${deposit}", inline=False)
             except discord.NotFound:
-                embed.add_field(name=f"#{start_index + i + 1} - *Unknown User*", value=f"${data['balance']}", inline=False)
+                balance = data.get('balance', 0)
+                deposit = data.get('deposit', 0)
+                embed.add_field(name=f"#{start_index + i + 1} - *Unknown User*", value=f"Wallet: ${balance} | Bank: ${deposit}", inline=False)
 
         total_pages = ((len(sorted_users) - 1) // items_per_page) + 1
         embed.set_footer(text=f"Page {page}/{total_pages}")
@@ -46,9 +50,9 @@ class LeaderboardCog(commands.Cog):
     @app_commands.describe(page="The page of the leaderboard to display.")
     async def fish(self, interaction: discord.Interaction, page: int = 1):
         users = load_user_data()
-        sorted_users = sorted(users.items(), key=lambda item: len(item[1]["fish"]), reverse=True)
+        sorted_users = sorted(users.items(), key=lambda item: len(item[1].get("fish", [])), reverse=True)
 
-        items_per_page = 10
+        items_per_page = 5
         start_index = (page - 1) * items_per_page
         end_index = start_index + items_per_page
 
@@ -66,9 +70,11 @@ class LeaderboardCog(commands.Cog):
         for i, (user_id, data) in enumerate(sorted_users[start_index:end_index]):
             try:
                 user = await self.bot.fetch_user(int(user_id))
-                embed.add_field(name=f"#{start_index + i + 1} - {user.name}", value=f"{len(data['fish'])} fish", inline=False)
+                fish_count = len(data.get('fish', []))
+                embed.add_field(name=f"#{start_index + i + 1} - {user.name}", value=f"{fish_count} fish", inline=False)
             except discord.NotFound:
-                embed.add_field(name=f"#{start_index + i + 1} - *Unknown User*", value=f"{len(data['fish'])} fish", inline=False)
+                fish_count = len(data.get('fish', []))
+                embed.add_field(name=f"#{start_index + i + 1} - *Unknown User*", value=f"{fish_count} fish", inline=False)
 
         total_pages = ((len(sorted_users) - 1) // items_per_page) + 1
         embed.set_footer(text=f"Page {page}/{total_pages}")
